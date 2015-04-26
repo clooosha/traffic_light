@@ -49,29 +49,37 @@ class Handler_http(BaseHTTPRequestHandler):
 			self.send_response(200)
 			self.end_headers()
 			sequence = self.create_sequence()
-			res = {'status': 'ok', 'response':{'sequence':sequence}}
-			self.wfile.write(json.dumps(res).encode('utf-8'))
+			answer = {'status': 'ok', 'response':{'sequence':sequence}}
+			print("Output data: ", answer)
+			self.wfile.write(json.dumps(answer).encode('utf-8'))
 		elif self.path == '/observation/add':
-			print("content", int(self.headers['Content-Length']))
 			data = self.rfile.read(int(self.headers['Content-Length']))
-			print (data)
 			try:
 				data = json.loads(data.decode('utf-8'))
 			except:
-				self.send_response(200, 'ok')
+				self.send_response(200)
 				self.end_headers()
-				res = {'status':'error', 'msg':'Bad data'}
+				answer = {'status':'error', 'msg':'json.decode'}
 				print(json.dumps(res))
-				self.wfile.write(json.dumps(res))
+				self.wfile.write(json.dumps(answer).encode('utf-8'))
 				return
-			print (data)
-			print (self.analyze_data(data))
+			print ("Input data: ", data)
+			res = self.analyze_data(data)
+			if res[0] == 'ok':
+				answer = {'status': res[0], 'response': {'start': res[1], 'missing':[res[2], res[3]]}}
+			else:
+				answer = {'status': res[0], 'msg': res[1]}
+			print("Output data: ", answer)
 			self.send_response(200)
+			self.end_headers()
+			self.wfile.write(json.dumps(answer).encode('utf-8'))
 		elif self.path == '/clear':
 			Handler_http.sequences = []
 			self.send_response(200)
 			self.end_headers()
-			res = {'status': 'ok', 'response':'ok' }
-			self.wfile.write(json.dumps(res))
+			answer = {'status': 'ok', 'response':'ok' }
+			print("Output data: ", answer)
+			self.wfile.write(json.dumps(answer).encode('utf-8'))
 		else:
 			self.send_response(404)
+			self.end_headers()

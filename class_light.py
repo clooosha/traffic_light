@@ -53,7 +53,7 @@ class Light:
 						self.break_section[0] |= self.search_break_section(self.prev_section[0][x], {y - x for y in self.numbs[0]})
 					for x in range(len(self.prev_section[1])):
 						self.break_section[1] |= self.search_break_section(self.prev_section[1][x], {y - x for y in self.numbs[1]})
-				return (self.counter, self.set_in_str(self.break_section[0]), self.set_in_str(self.break_section[1]))
+				return ('ok', [self.counter], self.set_in_str(self.break_section[0]), self.set_in_str(self.break_section[1]))
 		else:
 			#Анализ 1-го циферблата
 			cur_section = self.str_in_set(str_nums[0])
@@ -98,7 +98,7 @@ class Light:
 				self.break_section[1] |= self.search_break_section(cur_section, cur_numbs)
 
 			self.counter += 1
-		return (list(x[0]*10 + x[1] for x in itertools.product(self.numbs[0], self.numbs[1])), self.set_in_str(self.break_section[0]), self.set_in_str(self.break_section[1]))
+		return ('ok', list(x[0]*10 + x[1] for x in itertools.product(self.numbs[0], self.numbs[1])), self.set_in_str(self.break_section[0]), self.set_in_str(self.break_section[1]))
 
 if __name__ == '__main__':
 	a = Light()
