@@ -4,9 +4,17 @@ import http.client
 import hashlib
 from class_light import Light
 import json
+import pickle
 
 class Handler_http(BaseHTTPRequestHandler):
 	sequences = {}
+	print ("Reading data...")
+	try:
+		f = open('data.pickle', 'rb')
+		sequences = pickle.load(f)
+		print("Found sequences:", len(sequences))
+	except:
+		print("Error.")
 	def create_sequence(self):
 		sequence = hashlib.md5(str(len(Handler_http.sequences)).encode('utf-8')).hexdigest()
 		print (sequence)
@@ -59,7 +67,7 @@ class Handler_http(BaseHTTPRequestHandler):
 				self.send_response(200)
 				self.end_headers()
 				answer = {'status':'error', 'msg':'Bad data'}
-				print(json.dumps(res))
+				print(json.dumps(answer))
 				self.wfile.write(json.dumps(answer).encode('utf-8'))
 				return
 			print ("Input data: ", data)
@@ -82,3 +90,8 @@ class Handler_http(BaseHTTPRequestHandler):
 		else:
 			self.send_response(404)
 			self.end_headers()
+
+	def save_data(self):
+		print("Saving..")
+		with open('data.pickle', 'wb') as f:
+			pickle.dump(Handler_http.sequences, f)

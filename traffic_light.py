@@ -12,4 +12,5 @@ try:
 	server.serve_forever()
 except KeyboardInterrupt:
 	print ("^C received, shutting down server")
+	Handler_http.save_data(Handler_http)
 	server.socket.close()
