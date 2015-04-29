@@ -1,0 +1,56 @@
+#! /bin/sh
+### BEGIN INIT INFO
+# Provides:          traffic_light
+# Required-Start:   $all
+# Required-Stop:    $aal
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Traffic_light
+# Description:       Task for Machinezone.ru
+### END INIT INFO
+
+# Author: Dmitriy Dmitrakov
+#
+# Please remove the "Author" lines above and replace them
+# with your own name if you copy and modify this script.
+
+# Do NOT "set -e"
+
+# PATH should only include /usr/* if it runs after the mountnfs.sh script
+PATH=/sbin:/usr/sbin:/bin:/usr/bin:/usr/local/traffic_light/
+DESC="Traffic_light"
+NAME=traffic_light
+DAEMON=$NAME.py
+DAEMON_ARGS=
+PIDFILE=/var/run/$NAME.pid
+SCRIPTNAME=/etc/init.d/$NAME
+
+# Exit if the package is not installed
+# [ -x "$DAEMON" ] || exit 0
+
+# Read configuration variable file if it is present
+[ -r /etc/default/$NAME ] && . /etc/default/$NAME
+
+case "$1" in
+  start)
+    echo "Starting server"
+    # Start the daemon
+    $DAEMON start
+    ;;
+  stop)
+    echo "Stopping server"
+    # Stop the daemon
+    $DAEMON stop
+    ;;
+  restart)
+    echo "Restarting server"
+    $DAEMON restart
+    ;;
+  *)
+    # Refuse to do other stuff
+    echo "Usage: /etc/init.d/testdaemon.sh {start|stop|restart}"
+    exit 1
+    ;;
+esac
+
+exit 0

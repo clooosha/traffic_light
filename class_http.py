@@ -1,6 +1,5 @@
 #-*- coding: utf-8 -*-
 from http.server import BaseHTTPRequestHandler, HTTPServer
-import http.client
 import hashlib
 from class_light import Light
 import json
@@ -8,13 +7,7 @@ import pickle
 
 class Handler_http(BaseHTTPRequestHandler):
 	sequences = {}
-	print ("Reading data...")
-	try:
-		f = open('data.pickle', 'rb')
-		sequences = pickle.load(f)
-		print("Found sequences:", len(sequences))
-	except:
-		print("Error.")
+	db = "/usr/local/traffic_light/data.pickle"
 	def create_sequence(self):
 		sequence = hashlib.md5(str(len(Handler_http.sequences)).encode('utf-8')).hexdigest()
 		print (sequence)
@@ -90,8 +83,17 @@ class Handler_http(BaseHTTPRequestHandler):
 		else:
 			self.send_response(404)
 			self.end_headers()
-
+	def read_data(self):
+		"""Чтение данных о введенных последовательностях"""
+		print ("Reading data...")
+		try:
+			f = open(Handler_http.db, 'rb')
+			sequences = pickle.load(f)
+			print("Found sequences:", len(sequences))
+		except:
+			print("Error.")
 	def save_data(self):
+		"""Сохранение данных о последовательностях"""
 		print("Saving..")
-		with open('data.pickle', 'wb') as f:
+		with open(Handler_http.db, 'wb') as f:
 			pickle.dump(Handler_http.sequences, f)
