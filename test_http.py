@@ -65,3 +65,10 @@ url = 'http://127.0.0.1:8080'
 r = requests.get(url)
 print(r.status_code, r.content)
 assert r.status_code == 200
+
+url = 'http://127.0.0.1:8080/observation/add'
+payload = {'observation': {'color':'green', 'numbers': ['1110111', '0011101']}, 'sequence':'1'}
+r = requests.post(url, data = json.dumps(payload).encode('utf-8'))
+print(r.status_code, r.content)
+assert r.status_code == 200
+assert json.loads(r.content.decode('utf-8')) == {"status": "error", "msg": "The sequence isn't found"}

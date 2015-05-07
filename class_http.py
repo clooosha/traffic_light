@@ -17,7 +17,7 @@ class Handler_http(BaseHTTPRequestHandler):
 	def analyze_data(self, data):
 		if 'sequence' in data:
 			if not (data['sequence'] in Handler_http.sequences):
-				return ('error', "The sequence isn't found")
+				return ('error', 'The sequence isn\'t found')
 		else:
 			return ('error', 'Bad data: no sequence')
 
@@ -95,5 +95,8 @@ class Handler_http(BaseHTTPRequestHandler):
 	def save_data(self):
 		"""Сохранение данных о последовательностях"""
 		print("Saving..")
-		with open(Handler_http.db, 'wb') as f:
-			pickle.dump(Handler_http.sequences, f)
+		try:
+			with open(Handler_http.db, 'wb') as f:
+				pickle.dump(Handler_http.sequences, f)
+		except:
+			print("Error.")
