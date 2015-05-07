@@ -87,7 +87,11 @@ class Light:
 				self.prev_section[0].append(cur_section)
 
 			if cur_section != self.prev_section[0][-1]:						#Сменилась цифра на 1-м циферблате, значит на 2-ом текущая 9
-				self.numbs[1] &= {(9 + self.counter) % 10}					#Значит на 2-м цифра текущая 9, вычесляем стартовую, учитывая ранее найденные
+				self.numbs[1] &= {(9 + self.counter) % 10}					#Значит на 2-м цифра текущая 9, вычисляем стартовую, учитывая ранее найденные
+				if len(self.prev_section[0]) < 10:
+					self.prev_section[0].append(cur_section)
+					self.numbs[0] &= {(x + len(self.prev_section[0]) - 1) % 10 for x in cur_numbs}	#Пересечение предыдущих предполагаемых цифр и полученных сейчас
+			if (self.counter // 10 + 1) > len(self.prev_section[0]):		#Для случая когда сменилась цифра, но на секциях этого не отразилось
 				if len(self.prev_section[0]) < 10:
 					self.prev_section[0].append(cur_section)
 					self.numbs[0] &= {(x + len(self.prev_section[0]) - 1) % 10 for x in cur_numbs}	#Пересечение предыдущих предполагаемых цифр и полученных сейчас
@@ -119,7 +123,7 @@ class Light:
 					return ('error', "No solutions found")					#Ошибка. Некорректные данные
 
 			self.counter += 1
-		return ('ok', list(x[0]*10 + x[1] for x in itertools.product(self.numbs[0], self.numbs[1]) if x[0]*10 + x[1] != 0), self.set_in_str(self.break_section[0]), self.set_in_str(self.break_section[1]))
+		return ('ok', list(x[0]*10 + x[1] for x in itertools.product(self.numbs[0], self.numbs[1]) if x[0]*10 + x[1] >= self.counter), self.set_in_str(self.break_section[0]), self.set_in_str(self.break_section[1]))
 
 import unittest
 
@@ -149,6 +153,22 @@ class TestLights(unittest.TestCase):
 		self.assertEqual(d.analyze('green', ['1110111', '1010101']), ('ok', [8, 2, 80, 88, 82], '0000000', '0000000'))
 		self.assertEqual(d.analyze('green', ['1110111', '0010010']), ('ok', [2, 82], '0000000', '0001000'))
 		self.assertEqual(d.analyze('red'), ('ok', [2], '0000000', '0001000'))
+		e = Light()
+		self.assertEqual(e.analyze ('green', ['0010011', '0000011']), ('ok', [3, 5, 6, 8, 9, 80, 83, 85, 86, 88, 89, 90, 93, 95, 96, 98, 99, 30, 33, 35, 36, 38, 39], '1000000', '1000000'))
+		self.assertEqual(e.analyze ('green', ['0010011', '0000101']), ('ok', [3, 83, 93, 33], '1000000', '1011000'))
+		self.assertEqual(e.analyze ('green', ['0010011', '0000010']), ('ok', [3, 83, 93, 33], '1000000', '1011000'))
+		self.assertEqual(e.analyze ('green', ['0010011', '0000111']), ('ok', [83, 93, 33], '1000000', '1111000'))
+		self.assertEqual(e.analyze ('green', ['0010011', '0000011']), ('ok', [83, 93, 33], '1000000', '1111000'))
+		self.assertEqual(e.analyze ('green', ['0010011', '0000111']), ('ok', [83, 93, 33], '1000000', '1111000'))
+		self.assertEqual(e.analyze ('green', ['0010011', '0000010']), ('ok', [83, 93, 33], '1000000', '1111000'))
+		self.assertEqual(e.analyze ('green', ['0010011', '0000111']), ('ok', [83, 93, 33], '1000000', '1111000'))
+		self.assertEqual(e.analyze ('green', ['0010011', '0000011']), ('ok', [83, 93, 33], '1000000', '1111000'))
+		self.assertEqual(e.analyze ('green', ['0010011', '0000010']), ('ok', [83, 93, 33], '1000000', '1111000'))
+		self.assertEqual(e.analyze ('green', ['0010011', '0000011']), ('ok', [93], '1101000', '1111000'))
+		self.assertEqual(e.analyze ('green', ['0010011', '0000101']), ('ok', [93], '1101000', '1111000'))
+		self.assertEqual(e.analyze ('green', ['0010011', '0000010']), ('ok', [93], '1101000', '1111000'))
+		self.assertEqual(e.analyze ('green', ['0010011', '0000111']), ('ok', [93], '1101000', '1111000'))
+		self.assertEqual(e.analyze ('green', ['0010010', '0000011']), ('ok', [93], '1101100', '1111000'))
 
 if __name__ == '__main__':
 	unittest.main()
